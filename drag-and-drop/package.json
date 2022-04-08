@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^3.8.3",
     "vue": "^2.6.14",
-    "vue-drag-resize": "^1.5.4"
+    "vue-drag-resize": "^1.5.4",
+    "vue-video-player": "^5.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

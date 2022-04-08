@@ -19,7 +19,7 @@
         :w="item.w"
         :h="item.h"
       >
-        我是{{ item.label }}
+        <component class="inner-widget" :is="item.component" />
       </dragger>
     </div>
   </div>
@@ -27,6 +27,10 @@
 
 <script>
 import WidgetList from '@/components/widget-list';
+import BarChart from '@/components/bar-chart';
+import AreaChart from '@/components/area-chart';
+import CustomText from '@/components/custom-text';
+import CustomVideo from '@/components/custom-video';
 import * as CONFIG from '@/constants/config';
 
 let currentId = 0;
@@ -38,6 +42,10 @@ export default {
   name: 'App',
   components: {
     WidgetList,
+    BarChart,
+    AreaChart,
+    CustomText,
+    CustomVideo,
   },
   data () {
     return {
@@ -56,6 +64,7 @@ export default {
         // w: this.findDefaultWithType(currentWidget.type).w,
         // h: this.findDefaultWithType(currentWidget.type).h,
         label: currentWidget.label,
+        component: currentWidget.component, // 新增的组件名
       });
     },
     // 在小组件鼠标落下的时候
@@ -102,5 +111,9 @@ body {
 .box {
   outline: 1px solid blue;
   position: absolute;
+}
+.inner-widget {
+  height: 100%;
+  width: 100%;
 }
 </style>
