@@ -1,13 +1,11 @@
 <template>
-  <div>文字</div>
+  <div>{{ value }}</div>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-
-    };
+  props: {
+    value: String,
   },
 }
 </script>

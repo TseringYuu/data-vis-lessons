@@ -19,7 +19,11 @@
         :w="item.w"
         :h="item.h"
       >
-        <component class="inner-widget" :is="item.component" />
+        <component
+          class="inner-widget"
+          :is="item.component"
+          :value="item.value"
+        />
       </dragger>
     </div>
   </div>
@@ -56,11 +60,12 @@ export default {
   methods: {
     // 放置
     onDrop (e) {
+      // 新增面板项
       this.list.push({
         id: currentId++,
         x: e.offsetX - widgetX,
         y: e.offsetY - widgetY,
-        ...this.findDefaultWithType(currentWidget.type),
+        ...currentWidget.default, // 生成默认的宽高数据 w, h, value
         // w: this.findDefaultWithType(currentWidget.type).w,
         // h: this.findDefaultWithType(currentWidget.type).h,
         label: currentWidget.label,

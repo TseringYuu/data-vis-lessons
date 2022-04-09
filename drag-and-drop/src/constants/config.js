@@ -1,40 +1,30 @@
+import * as dft from './default';
+
 // 组件列表的配置项
 export const WIDGET_LIST = [
   {
     type: 'area-chart',
     component: 'area-chart',
     label: '面积图',
-    default: {
-      w: 300,
-      h: 150,
-    },
+    default: dft.AREA_CHART,
   },
   {
     type: 'bar-chart',
     component: 'bar-chart',
     label: '柱状图',
-    default: {
-      w: 300,
-      h: 150,
-    },
+    default: dft.BAR_CHART,
   },
   {
     type: 'text',
     component: 'custom-text',
     label: '文字',
-    default: {
-      w: 200,
-      h: 50,
-    },
+    default: dft.TEXT,
   },
   {
     type: 'video',
     component: 'custom-video',
     label: '视频',
-    default: {
-      w: 400,
-      h: 300,
-    },
+    default: dft.VIDEO,
   },
 ];
 

@@ -10,9 +10,13 @@ export default {
   components: {
     player: videoPlayer,
   },
-  data () {
-    return {
-      options: {
+  props: {
+    // src: 'https://cdn.theguardian.tv/webM/2015/07/20/150716YesMen_synd_768k_vp8.webm'
+    value: String,
+  },
+  computed: {
+    options () {
+      return {
         // videojs options
         autoplay: 'muted',
         muted: true,
@@ -20,11 +24,11 @@ export default {
         playbackRates: [0.7, 1.0, 1.5, 2.0],
         sources: [{
           type: 'video/mp4',
-          src: 'https://cdn.theguardian.tv/webM/2015/07/20/150716YesMen_synd_768k_vp8.webm',
+          src: this.value,
         }],
         poster: '/static/images/author.jpg',
-      },
-    };
+      };
+    },
   },
 }
 // npm
