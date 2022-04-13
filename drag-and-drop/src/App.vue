@@ -15,9 +15,14 @@
         v-for="item in list"
         :key="item.id"
         class="box"
-        :style="`transform: translate(${ item.x }px, ${ item.y }px);`"
+        :x="item.x"
+        :y="item.y"
+        :z="item.z"
         :w="item.w"
         :h="item.h"
+        :isActive="item.focused"
+        @contextmenu.native.prevent="onContextMenuOpen($event, item)"
+        @clicked="onFocus(item)"
       >
         <component
           class="inner-widget"
@@ -26,15 +31,29 @@
         />
       </dragger>
     </div>
+
+    <context-menu ref="contextMenu">
+      <li>
+          <a href="#" @click.prevent.stop="onLayerTop">置顶</a>
+      </li>
+      <li>
+          <a href="#" @click.prevent.stop="onLayerBottom">置底</a>
+      </li>
+    </context-menu>
   </div>
 </template>
 
 <script>
+// 小组件列表
 import WidgetList from '@/components/widget-list';
+// 左侧小组件
 import BarChart from '@/components/bar-chart';
 import AreaChart from '@/components/area-chart';
 import CustomText from '@/components/custom-text';
 import CustomVideo from '@/components/custom-video';
+// 右键菜单
+import ContextMenu from 'vue-context';
+// 静态配置
 import * as CONFIG from '@/constants/config';
 
 let currentId = 0;
@@ -50,6 +69,7 @@ export default {
     AreaChart,
     CustomText,
     CustomVideo,
+    ContextMenu,
   },
   data () {
     return {
@@ -58,19 +78,58 @@ export default {
     };
   },
   methods: {
+    onLayerBottom () {
+      const currentItem = this.list.find(item => item.focused);
+      const minZ = Math.min(...this.list.map(item => item.z)) || 0;
+      if (currentItem.z === minZ) {
+        alert('已经是最底层了');
+        return;
+      }
+      if (minZ - 1 < 0) {
+        this.list = this.list.map(item => {
+          item.z -= minZ - 1;
+          return item;
+        });
+        currentItem.z = 0;
+      } else {
+        currentItem.z = minZ - 1;
+      }
+    },
+    // 让当前项获取焦点 其他项失去焦点
+    onFocus (currentItem) {
+      this.list = this.list.map(item => {
+        item.focused = item.id === currentItem.id;
+        return item;
+      });
+    },
+    // 右键菜单打开事件
+    onContextMenuOpen (e, item) {
+      // 打开右键菜单
+      this.$refs.contextMenu.open(e);
+      // 给当前项获取焦点
+      this.onFocus(item);
+    },
     // 放置
     onDrop (e) {
+      // 关闭右键菜单
+      this.$refs.contextMenu.close();
       // 新增面板项
-      this.list.push({
+      const newItem = {
         id: currentId++,
         x: e.offsetX - widgetX,
         y: e.offsetY - widgetY,
+        // 新增的面板项层级应该最高
+        z: !this.list.length
+          ? 0
+          : Math.max(...this.list.map(item => item.z)) + 1,
         ...currentWidget.default, // 生成默认的宽高数据 w, h, value
         // w: this.findDefaultWithType(currentWidget.type).w,
         // h: this.findDefaultWithType(currentWidget.type).h,
         label: currentWidget.label,
         component: currentWidget.component, // 新增的组件名
-      });
+      };
+      this.list.push(newItem);
+      this.onFocus(newItem);
     },
     // 在小组件鼠标落下的时候
     onWidgetMouseDown (e, widget) {
