@@ -39,7 +39,17 @@
       <li>
           <a href="#" @click.prevent.stop="onLayerBottom">置底</a>
       </li>
+      <li>
+          <a href="#" @click.prevent.stop="onLayerUp">上移图层</a>
+      </li>
+      <li>
+          <a href="#" @click.prevent.stop="onLayerDown">下移图层</a>
+      </li>
+      <li>
+          <a href="#" @click.prevent.stop="onLayerRemove">删除</a>
+      </li>
     </context-menu>
+
   </div>
 </template>
 
@@ -78,11 +88,59 @@ export default {
     };
   },
   methods: {
-    onLayerBottom () {
-      const currentItem = this.list.find(item => item.focused);
+    findTopLayerZ (currentItem) {
+      const maxZ = Math.max(...this.list.map(item => item.z)) || 0;
+      if (currentItem.z === maxZ) {
+        alert('已经是最顶层了');
+        return;
+      }
+      return maxZ;
+    },
+    findBottomLayerZ (currentItem) {
       const minZ = Math.min(...this.list.map(item => item.z)) || 0;
       if (currentItem.z === minZ) {
         alert('已经是最底层了');
+        return false;
+      }
+      return minZ;
+    },
+    onLayerRemove () {
+      this.list = this.list.filter(item => !item.focused);
+    },
+    onLayerUp () {
+      const currentItem = this.list.find(item => item.focused);
+      if (!this.findTopLayerZ(currentItem)) {
+        return;
+      }
+      currentItem.z++;
+      // 楼上的
+      const upstairs = this.list.find(item => item.z === currentItem.z);
+      // 如果找到楼上的 就让楼上搬下来
+      upstairs && (upstairs.z--);
+    },
+    onLayerDown () {
+      const currentItem = this.list.find(item => item.focused);
+      if (this.findBottomLayerZ(currentItem) === false) {
+        return;
+      }
+      currentItem.z--;
+      // 楼下的
+      const downstairs = this.list.find(item => item.z === currentItem.z);
+      // 如果找到楼下的 就让楼下搬上来
+      downstairs && (downstairs.z++);
+    },
+    onLayerTop () {
+      const currentItem = this.list.find(item => item.focused);
+      const maxZ = this.findTopLayerZ(currentItem);
+      if (!maxZ) {
+        return;
+      }
+      currentItem.z = maxZ + 1;
+    },
+    onLayerBottom () {
+      const currentItem = this.list.find(item => item.focused);
+      const minZ = this.findBottomLayerZ(currentItem);
+      if (minZ === false) {
         return;
       }
       if (minZ - 1 < 0) {
