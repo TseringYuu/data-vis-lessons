@@ -8,12 +8,14 @@
     <!-- 操作面板 -->
     <div
       class="panel"
-      @dragover="e => e.preventDefault()"
+      ref="panel"
+      @dragover.prevent
       @drop="onDrop"
     >
       <dragger
-        v-for="item in list"
+        v-for="(item, i) in list"
         :key="item.id"
+        ref="widget"
         class="box"
         :x="item.x"
         :y="item.y"
@@ -28,25 +30,26 @@
           class="inner-widget"
           :is="item.component"
           :value="item.value"
+          @drop.native.stop="onDrop($event, i)"
         />
       </dragger>
     </div>
 
     <context-menu ref="contextMenu">
       <li>
-          <a href="#" @click.prevent.stop="onLayerTop">置顶</a>
+          <a href="#" @click.prevent="onLayerTop">置顶</a>
       </li>
       <li>
-          <a href="#" @click.prevent.stop="onLayerBottom">置底</a>
+          <a href="#" @click.prevent="onLayerBottom">置底</a>
       </li>
       <li>
-          <a href="#" @click.prevent.stop="onLayerUp">上移图层</a>
+          <a href="#" @click.prevent="onLayerUp">上移图层</a>
       </li>
       <li>
-          <a href="#" @click.prevent.stop="onLayerDown">下移图层</a>
+          <a href="#" @click.prevent="onLayerDown">下移图层</a>
       </li>
       <li>
-          <a href="#" @click.prevent.stop="onLayerRemove">删除</a>
+          <a href="#" @click.prevent="onLayerRemove">删除</a>
       </li>
     </context-menu>
 
@@ -168,14 +171,23 @@ export default {
       this.onFocus(item);
     },
     // 放置
-    onDrop (e) {
+    onDrop (e, i) {
+      let x = e.offsetX - widgetX;
+      let y = e.offsetY - widgetY;
+      // 放置在其他图层上时
+      if (i !== undefined) {
+        const currentWidget = this.$refs['widget'][i].$el;
+        x = e.offsetX + currentWidget.offsetLeft - widgetX;
+        y = e.offsetY + currentWidget.offsetTop - widgetY;
+      }
       // 关闭右键菜单
       this.$refs.contextMenu.close();
       // 新增面板项
       const newItem = {
         id: currentId++,
-        x: e.offsetX - widgetX,
-        y: e.offsetY - widgetY,
+        //
+        x,
+        y,
         // 新增的面板项层级应该最高
         z: !this.list.length
           ? 0
