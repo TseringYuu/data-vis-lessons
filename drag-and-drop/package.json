@@ -11,11 +11,13 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "echarts": "^5.3.2",
+    "element-ui": "^2.15.8",
     "vue": "^2.6.14",
     "vue-context": "^6.0.0",
     "vue-drag-resize": "^1.5.4",
     "vue-echarts": "^6.0.2",
-    "vue-video-player": "^5.0.2"
+    "vue-video-player": "^5.0.2",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

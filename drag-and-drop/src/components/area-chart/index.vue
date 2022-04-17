@@ -24,7 +24,8 @@ export default {
         series: [
           {
             data: this.value.map(item => item.value),
-            type: 'bar'
+            type: 'line',
+            areaStyle: {},
           },
         ],
       };

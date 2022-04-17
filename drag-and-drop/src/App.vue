@@ -1,10 +1,29 @@
 <template>
   <div id="app">
-    <!-- 组件列表 -->
-    <widget-list
-      :list="widgetList"
-      @onWidgetMouseDown="onWidgetMouseDown"
-    />
+    <el-tabs v-model="siderType" class="sider">
+      <el-tab-pane label="图层" name="layer">
+        <!-- 图层列表 -->
+        <sortable v-model="list" @change="onSortChange">
+          <transition-group>
+            <div
+              class="layer"
+              v-for="item in list"
+              :key="item.id"
+            >
+              {{ item.label }}
+            </div>
+          </transition-group>
+        </sortable>
+
+      </el-tab-pane>
+      <el-tab-pane label="组件" name="widget">
+        <!-- 组件列表 -->
+        <widget-list
+          :list="widgetList"
+          @onWidgetMouseDown="onWidgetMouseDown"
+        />
+      </el-tab-pane>
+    </el-tabs>
     <!-- 操作面板 -->
     <div
       class="panel"
@@ -86,11 +105,22 @@ export default {
   },
   data () {
     return {
+      siderType: 'widget',
       list: [],
       widgetList: CONFIG.WIDGET_LIST,
     };
   },
   methods: {
+    onSortChange () {
+      const len = this.list.length;
+      this.list.forEach((item, i) => {
+        item.z = len - i;
+      });
+    },
+    // 给list排序
+    sortList () {
+      this.list.sort((a, b) => b.z - a.z);
+    },
     findTopLayerZ (currentItem) {
       const maxZ = Math.max(...this.list.map(item => item.z)) || 0;
       if (currentItem.z === maxZ) {
@@ -107,20 +137,25 @@ export default {
       }
       return minZ;
     },
+    // 移除图层
     onLayerRemove () {
       this.list = this.list.filter(item => !item.focused);
+      this.sortList();
     },
+    // 上移图层
     onLayerUp () {
       const currentItem = this.list.find(item => item.focused);
       if (!this.findTopLayerZ(currentItem)) {
         return;
       }
-      currentItem.z++;
       // 楼上的
-      const upstairs = this.list.find(item => item.z === currentItem.z);
+      const upstairs = this.list.find(item => item.z === currentItem.z + 1);
       // 如果找到楼上的 就让楼上搬下来
       upstairs && (upstairs.z--);
+      currentItem.z++;
+      this.sortList();
     },
+    // 下移图层
     onLayerDown () {
       const currentItem = this.list.find(item => item.focused);
       if (this.findBottomLayerZ(currentItem) === false) {
@@ -131,7 +166,9 @@ export default {
       const downstairs = this.list.find(item => item.z === currentItem.z);
       // 如果找到楼下的 就让楼下搬上来
       downstairs && (downstairs.z++);
+      this.sortList();
     },
+    // 置顶
     onLayerTop () {
       const currentItem = this.list.find(item => item.focused);
       const maxZ = this.findTopLayerZ(currentItem);
@@ -139,7 +176,9 @@ export default {
         return;
       }
       currentItem.z = maxZ + 1;
+      this.sortList();
     },
+    // 置底
     onLayerBottom () {
       const currentItem = this.list.find(item => item.focused);
       const minZ = this.findBottomLayerZ(currentItem);
@@ -155,6 +194,7 @@ export default {
       } else {
         currentItem.z = minZ - 1;
       }
+      this.sortList();
     },
     // 让当前项获取焦点 其他项失去焦点
     onFocus (currentItem) {
@@ -176,9 +216,8 @@ export default {
       let y = e.offsetY - widgetY;
       // 放置在其他图层上时
       if (i !== undefined) {
-        const currentWidget = this.$refs['widget'][i].$el;
-        x = e.offsetX + currentWidget.offsetLeft - widgetX;
-        y = e.offsetY + currentWidget.offsetTop - widgetY;
+        x += this.list[i].x;
+        y += this.list[i].y;
       }
       // 关闭右键菜单
       this.$refs.contextMenu.close();
@@ -200,6 +239,7 @@ export default {
       };
       this.list.push(newItem);
       this.onFocus(newItem);
+      this.sortList();
     },
     // 在小组件鼠标落下的时候
     onWidgetMouseDown (e, widget) {
@@ -224,7 +264,7 @@ body {
   width: 100vw;
   height: 100vh;
 }
-.widget-list {
+.sider {
   width: 200px;
   background: #e9e9e9;
 }
@@ -249,5 +289,13 @@ body {
 .inner-widget {
   height: 100%;
   width: 100%;
+}
+.layer {
+  width: 100%;
+  height: 50px;
+  background: #fff;
+}
+.layer:hover {
+  background: #e9e9e9;
 }
 </style>
