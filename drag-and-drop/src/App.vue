@@ -44,6 +44,8 @@
         :isActive="item.focused"
         @contextmenu.native.prevent="onContextMenuOpen($event, item)"
         @clicked="onFocus(item)"
+        @resizestop="record"
+        @dragstop="record"
       >
         <component
           class="inner-widget"
@@ -72,6 +74,8 @@
       </li>
     </context-menu>
 
+    <button @click="withdraw">撤回</button>
+
   </div>
 </template>
 
@@ -92,6 +96,10 @@ let currentId = 0;
 let widgetX = 0;
 let widgetY = 0;
 let currentWidget = null;
+// 用于撤回的记录
+const recordList = [];
+// 用于反撤回的记录
+const recordList4ctrlY = [];
 
 export default {
   name: 'App',
@@ -111,6 +119,31 @@ export default {
     };
   },
   methods: {
+    onKeyUp (e) {
+      // ctrl + z
+      if (e.ctrlKey && e.key === 'z') {
+        this.withdraw();
+      }
+      // ctrl + y
+      if (e.ctrlKey && e.key === 'y') {
+        this.ctrlY();
+      }
+    },
+    // 记录list
+    record () {
+      recordList.push(this.list.concat());
+    },
+    // 撤回
+    withdraw () {
+      const idx = recordList.length - 2;
+      this.list = recordList[idx];
+      const tmp = recordList.pop();
+      recordList4ctrlY.push(tmp);
+    },
+    // 反撤回
+    ctrlY () {
+      this.list = recordList4ctrlY.pop();
+    },
     onSortChange () {
       const len = this.list.length;
       this.list.forEach((item, i) => {
@@ -141,6 +174,7 @@ export default {
     onLayerRemove () {
       this.list = this.list.filter(item => !item.focused);
       this.sortList();
+      this.record();
     },
     // 上移图层
     onLayerUp () {
@@ -154,6 +188,7 @@ export default {
       upstairs && (upstairs.z--);
       currentItem.z++;
       this.sortList();
+      this.record();
     },
     // 下移图层
     onLayerDown () {
@@ -167,6 +202,7 @@ export default {
       // 如果找到楼下的 就让楼下搬上来
       downstairs && (downstairs.z++);
       this.sortList();
+      this.record();
     },
     // 置顶
     onLayerTop () {
@@ -177,6 +213,7 @@ export default {
       }
       currentItem.z = maxZ + 1;
       this.sortList();
+      this.record();
     },
     // 置底
     onLayerBottom () {
@@ -195,6 +232,7 @@ export default {
         currentItem.z = minZ - 1;
       }
       this.sortList();
+      this.record();
     },
     // 让当前项获取焦点 其他项失去焦点
     onFocus (currentItem) {
@@ -240,6 +278,7 @@ export default {
       this.list.push(newItem);
       this.onFocus(newItem);
       this.sortList();
+      this.record();
     },
     // 在小组件鼠标落下的时候
     onWidgetMouseDown (e, widget) {
@@ -251,6 +290,12 @@ export default {
     findDefaultWithType (type) {
       return CONFIG.WIDGET_LIST.find(item => item.type === type).default;
     },
+  },
+  mounted () {
+    document.addEventListener('keyup', this.onKeyUp);
+  },
+  beforeDestroy () {
+    document.removeEventListener('keyup', this.onKeyUp);
   },
 }
 </script>
