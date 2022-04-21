@@ -74,8 +74,6 @@
       </li>
     </context-menu>
 
-    <button @click="withdraw">撤回</button>
-
   </div>
 </template>
 
@@ -135,14 +133,23 @@ export default {
     },
     // 撤回
     withdraw () {
-      const idx = recordList.length - 2;
-      this.list = recordList[idx];
+      if (recordList.length === 0) {
+        alert('撤回到底了');
+        return;
+      }
+      const idx = recordList.length - 2; // -1
+      if (idx === -1) {
+        this.list = [];
+      } else {
+        this.list = recordList[idx];
+      }
       const tmp = recordList.pop();
       recordList4ctrlY.push(tmp);
     },
     // 反撤回
     ctrlY () {
       this.list = recordList4ctrlY.pop();
+      this.record();
     },
     onSortChange () {
       const len = this.list.length;
