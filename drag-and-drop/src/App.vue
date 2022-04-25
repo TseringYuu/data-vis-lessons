@@ -51,10 +51,18 @@
           class="inner-widget"
           :is="item.component"
           :value="item.value"
+          :styles="item.styles"
           @drop.native.stop="onDrop($event, i)"
         />
       </dragger>
     </div>
+
+    <style-sider
+      class="sider right"
+      :current="current"
+      :form="currentForm"
+      @change="onStyleChange"
+    />
 
     <context-menu ref="contextMenu">
       <li>
@@ -80,6 +88,8 @@
 <script>
 // 小组件列表
 import WidgetList from '@/components/widget-list';
+// 样式配置区域
+import StyleSider from '@/components/style-sider';
 // 左侧小组件
 import BarChart from '@/components/bar-chart';
 import AreaChart from '@/components/area-chart';
@@ -108,6 +118,7 @@ export default {
     CustomText,
     CustomVideo,
     ContextMenu,
+    StyleSider,
   },
   data () {
     return {
@@ -116,7 +127,27 @@ export default {
       widgetList: CONFIG.WIDGET_LIST,
     };
   },
+  computed: {
+    current () {
+      return this.list.find(item => item.focused);
+    },
+    currentForm () {
+      if (!this.current) {
+        return [];
+      }
+      return CONFIG.WIDGET_LIST.find(item => this.current.type === item.type).styleForm;
+    },
+  },
   methods: {
+    // 当图层样式改变时
+    onStyleChange (id, newStyles) {
+      this.list = this.list.map((item) => {
+        if (item.id === id) {
+          item.style = newStyles;
+        }
+        return item;
+      });
+    },
     onKeyUp (e) {
       // ctrl + z
       if (e.ctrlKey && e.key === 'z') {
@@ -281,6 +312,8 @@ export default {
         // h: this.findDefaultWithType(currentWidget.type).h,
         label: currentWidget.label,
         component: currentWidget.component, // 新增的组件名
+        type: currentWidget.type, // 新增组件的类型
+        styles: currentWidget.styles, // 新增组件的类型
       };
       this.list.push(newItem);
       this.onFocus(newItem);
@@ -319,6 +352,9 @@ body {
 .sider {
   width: 200px;
   background: #e9e9e9;
+}
+.sider.right {
+  width: 320px;
 }
 .panel {
   flex: 1;
