@@ -10,11 +10,13 @@ export default {
   props: {
     // { name: string, value: number }[]
     value: Array,
+    styles: Object,
   },
   computed: {
     option () {
       return {
         xAxis: {
+          show: this.styles.xAxisVisible,
           type: 'category',
           data: this.value.map(item => item.name),
         },
@@ -25,7 +27,12 @@ export default {
           {
             data: this.value.map(item => item.value),
             type: 'line',
-            areaStyle: {},
+            areaStyle: {
+              color: this.styles.areaColor,
+            },
+            lineStyle: {
+              color: this.styles.lineColor,
+            },
           },
         ],
       };

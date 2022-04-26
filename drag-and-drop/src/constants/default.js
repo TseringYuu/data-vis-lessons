@@ -20,7 +20,9 @@ export const AREA_CHART_DATA = {
 
 // 面积图默认样式
 export const AREA_CHART_STYLE = {
-
+  areaColor: '#ff0000',
+  lineColor: '#0000ff',
+  xAxisVisible: false,
 };
 
 // 柱状图默认数据
@@ -70,5 +72,6 @@ export const VIDEO_DATA = {
 
 // 视频默认样式
 export const VIDEO_STYLE = {
-
+  // 是否显示控制条
+  ctrlBarVisible: true,
 };

@@ -13,11 +13,13 @@ export default {
   props: {
     // src: 'https://cdn.theguardian.tv/webM/2015/07/20/150716YesMen_synd_768k_vp8.webm'
     value: String,
+    styles: Object,
   },
   computed: {
     options () {
       return {
         // videojs options
+        controls: this.styles.ctrlBarVisible,
         autoplay: 'muted',
         muted: true,
         language: 'en',
