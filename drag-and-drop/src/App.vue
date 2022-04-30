@@ -46,6 +46,7 @@
         @clicked="onFocus(item)"
         @resizestop="record"
         @dragstop="record"
+        @dragging="(info) => onWidgetDrag(info, item.id)"
       >
         <component
           class="inner-widget"
@@ -81,6 +82,16 @@
           <a href="#" @click.prevent="onLayerRemove">删除</a>
       </li>
     </context-menu>
+
+    <!-- 对齐线 纵向 -->
+    <div
+      v-if="verticalStandardLineVisible"
+      :class="{
+        'standard-line': true,
+        'correct': isVerticalStandardLineCorrect,
+      }"
+      :style="`transform: translateX(-50%) translateX(${ verticalStandardLineX }px)`"
+    />
 
   </div>
 </template>
@@ -125,6 +136,9 @@ export default {
       siderType: 'widget',
       list: [],
       widgetList: CONFIG.WIDGET_LIST,
+      verticalStandardLineVisible: false,
+      isVerticalStandardLineCorrect: false,
+      verticalStandardLineX: 0,
     };
   },
   computed: {
@@ -139,6 +153,35 @@ export default {
     },
   },
   methods: {
+    // 当拖拽时，显示对齐线
+    onWidgetDrag (info, id) {
+      // 1. 拿当前的x
+      const {
+        left: x,
+        // top: y,
+        width: w,
+      } = info;
+      const x0 = x + w / 2;
+      // 2. 拿当前的x和数组中的别人挨个比
+      let flag = false;
+      let correct = false;
+      for (const widget of this.list) {
+        if (widget.id === id) {
+          continue;
+        }
+        const x00 = widget.x + widget.w / 2;
+        if (Math.abs(x0 - x00) < 10) {
+          flag = true;
+          if (x0 - x00 === 0) {
+            correct = true;
+          }
+          break;
+        }
+      }
+      this.verticalStandardLineVisible = flag;
+      this.isVerticalStandardLineCorrect = correct;
+      this.verticalStandardLineX = x0;
+    },
     // 当图层样式改变时
     onStyleChange (id, newStyles) {
       this.list = this.list.map((item) => {
@@ -387,5 +430,15 @@ body {
 }
 .layer:hover {
   background: #e9e9e9;
+}
+.standard-line {
+  height: 100%;
+  width: 5px;
+  background: rgba(255, 0, 0, 0.211);
+  position: absolute;
+  left: 200px;
+}
+.standard-line.correct {
+  background: red;
 }
 </style>
