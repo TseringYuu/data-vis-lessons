@@ -221,7 +221,7 @@ export default {
         return;
       }
       // 楼上的
-      const upstairs = this.list.find(item => item.z === currentItem.z + 1);
+      const upstairs = this.list.find(item => item.z === currentItem.z + 1 && item.id !== currentItem.id);
       // 如果找到楼上的 就让楼上搬下来
       upstairs && (upstairs.z--);
       currentItem.z++;
@@ -236,9 +236,11 @@ export default {
       }
       currentItem.z--;
       // 楼下的
-      const downstairs = this.list.find(item => item.z === currentItem.z);
+      const downstairs = this.list.find(item => item.z === currentItem.z && item.id !== currentItem.id);
       // 如果找到楼下的 就让楼下搬上来
       downstairs && (downstairs.z++);
+
+      console.log(currentItem, downstairs);
       this.sortList();
       this.record();
     },
