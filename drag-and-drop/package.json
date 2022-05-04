@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "echarts": "^5.3.2",
     "element-ui": "^2.15.8",
+    "lodash": "^4.17.21",
     "vue": "^2.6.14",
     "vue-context": "^6.0.0",
     "vue-drag-resize": "^1.5.4",

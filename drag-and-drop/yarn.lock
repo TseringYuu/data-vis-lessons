@@ -2170,11 +2170,6 @@
   "resolved" "https://registry.npmmirror.com/ci-info/-/ci-info-1.6.0.tgz"
   "version" "1.6.0"
 
-"clamp@^1.0.1":
-  "integrity" "sha1-ZqDmQBGBbjcZaCj9yMjBRzEshjQ="
-  "resolved" "https://registry.npmjs.org/clamp/-/clamp-1.0.1.tgz"
-  "version" "1.0.1"
-
 "clean-css@^5.2.2":
   "integrity" "sha512-YYuuxv4H/iNb1Z/5IbMRoxgrzjWGhOEFfd+groZ5dMCVkpENiMZmwspdrzBo9286JjM1gZJPAyL7ZIdzuvu2AQ=="
   "resolved" "https://registry.npmmirror.com/clean-css/-/clean-css-5.3.0.tgz"
@@ -3969,11 +3964,6 @@
   "resolved" "https://registry.npmmirror.com/lodash.merge/-/lodash.merge-4.6.2.tgz"
   "version" "4.6.2"
 
-"lodash.throttle@^4.0.0":
-  "integrity" "sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ="
-  "resolved" "https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz"
-  "version" "4.1.1"
-
 "lodash.truncate@^4.4.2":
   "integrity" "sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw=="
   "resolved" "https://registry.npmmirror.com/lodash.truncate/-/lodash.truncate-4.4.2.tgz"
@@ -3986,7 +3976,7 @@
 
 "lodash@^4.17.14", "lodash@^4.17.20", "lodash@^4.17.21":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-  "resolved" "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz"
+  "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
 
 "log-symbols@^4.1.0":
@@ -4059,11 +4049,6 @@
   "version" "3.1.0"
   dependencies:
     "semver" "^6.0.0"
-
-"material-colors@^1.0.0":
-  "integrity" "sha512-6qE4B9deFBIa9YSpOc9O0Sgc43zTeVYbgDT5veRKSlB2+ZuHNoVVxA1L/ckMUayV9Ay9y7Z/SZCLcGteW9i7bg=="
-  "resolved" "https://registry.npmjs.org/material-colors/-/material-colors-1.2.6.tgz"
-  "version" "1.2.6"
 
 "mdn-data@2.0.14":
   "integrity" "sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow=="
@@ -5756,11 +5741,6 @@
   "resolved" "https://registry.npmmirror.com/thunky/-/thunky-1.1.0.tgz"
   "version" "1.1.0"
 
-"tinycolor2@^1.1.2":
-  "integrity" "sha512-vJhccZPs965sV/L2sU4oRQVAos0pQXwsvTLkWYdqJ+a8Q5kPFzJTuOFwy7UniPli44NKQGAglksjvOcpo95aZA=="
-  "resolved" "https://registry.npmjs.org/tinycolor2/-/tinycolor2-1.4.2.tgz"
-  "version" "1.4.2"
-
 "to-fast-properties@^2.0.0":
   "integrity" "sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog=="
   "resolved" "https://registry.npmmirror.com/to-fast-properties/-/to-fast-properties-2.0.0.tgz"
@@ -5993,16 +5973,6 @@
   "version" "2.2.2"
   dependencies:
     "loose-envify" "^1.2.0"
-
-"vue-color@^2.8.1":
-  "integrity" "sha512-BoLCEHisXi2QgwlhZBg9UepvzZZmi4176vbr+31Shen5WWZwSLVgdScEPcB+yrAtuHAz42309C0A4+WiL9lNBw=="
-  "resolved" "https://registry.npmjs.org/vue-color/-/vue-color-2.8.1.tgz"
-  "version" "2.8.1"
-  dependencies:
-    "clamp" "^1.0.1"
-    "lodash.throttle" "^4.0.0"
-    "material-colors" "^1.0.0"
-    "tinycolor2" "^1.1.2"
 
 "vue-context@^6.0.0":
   "integrity" "sha512-x8gO6xgj0MtTCWcYbDjO/7VJ/gT+nV+unqICvsN0hwqqBzft31eYyExYqrSvfDCRI7ixxObu5tbl7BQAKge7eg=="

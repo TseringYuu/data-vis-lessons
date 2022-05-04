@@ -353,8 +353,6 @@ export default {
           ? 0
           : Math.max(...this.list.map(item => item.z)) + 1,
         ...currentWidget.default, // 生成默认的宽高数据 w, h, value
-        // w: this.findDefaultWithType(currentWidget.type).w,
-        // h: this.findDefaultWithType(currentWidget.type).h,
         label: currentWidget.label,
         component: currentWidget.component, // 新增的组件名
         type: currentWidget.type, // 新增组件的类型
@@ -364,6 +362,21 @@ export default {
       this.onFocus(newItem);
       this.sortList();
       this.record();
+
+      setTimeout(() => {
+        newItem.x += 200;
+        this.$nextTick(() => {
+          newItem.y += 200;
+          this.$nextTick(() => {
+            newItem.w += 200;
+            this.$nextTick(() => {
+              newItem.h += 200;
+            });
+          });
+        });
+
+      }, 1000);
+
     },
     // 在小组件鼠标落下的时候
     onWidgetMouseDown (e, widget) {
