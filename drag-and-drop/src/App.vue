@@ -44,8 +44,7 @@
         :isActive="item.focused"
         @contextmenu.native.prevent="onContextMenuOpen($event, item)"
         @clicked="onFocus(item)"
-        @resizestop="record"
-        @dragstop="record"
+        @mouseup.native="onWidgetMouseUp(i)"
         @dragging="(info) => onWidgetDrag(info, item.id)"
       >
         <component
@@ -110,6 +109,7 @@ import CustomVideo from '@/components/custom-video';
 import ContextMenu from 'vue-context';
 // 静态配置
 import * as CONFIG from '@/constants/config';
+import { cloneDeep, isEqual } from 'lodash';
 
 let currentId = 0;
 let widgetX = 0;
@@ -153,6 +153,35 @@ export default {
     },
   },
   methods: {
+    onWidgetMouseUp (i) {
+      const current = this.list[i]; // x, y, w, h
+      const rect = this.$refs.widget[i].rect; // left, top, width, height
+      if (!(current.x === rect.left && current.y === rect.top && current.w === rect.width && current.h === rect.height)) {
+        this.record(rect);
+      }
+    },
+    setNewList (newList) {
+
+      function updateItem (item, newItem) {
+        item.x = newItem.x;
+        this.$nextTick(() => {
+          item.y = newItem.y;
+          this.$nextTick(() => {
+            item.w = newItem.w;
+            this.$nextTick(() => {
+              item.h = newItem.h;
+            });
+          });
+        });
+      }
+
+      // to fix
+      for (const newItem of newList) {
+        const item = this.list.find(item => item.id === newItem.id);
+        item && updateItem.call(this, item, newItem);
+      }
+
+    },
     // 当拖拽时，显示对齐线
     onWidgetDrag (info, id) {
       // 1. 拿当前的x
@@ -202,8 +231,18 @@ export default {
       }
     },
     // 记录list
-    record () {
-      recordList.push(this.list.concat());
+    record (rect) {
+      if (rect) {
+        // 更新list
+        const current = this.list.find(item => item.focused);
+        current.x = rect.left;
+        current.y = rect.top;
+        current.w = rect.width;
+        current.h = rect.height;
+      }
+
+      recordList.push(cloneDeep(this.list));
+      console.log(recordList);
     },
     // 撤回
     withdraw () {
@@ -215,7 +254,7 @@ export default {
       if (idx === -1) {
         this.list = [];
       } else {
-        this.list = recordList[idx];
+        this.setNewList(recordList[idx]);
       }
       const tmp = recordList.pop();
       recordList4ctrlY.push(tmp);
@@ -362,21 +401,6 @@ export default {
       this.onFocus(newItem);
       this.sortList();
       this.record();
-
-      setTimeout(() => {
-        newItem.x += 200;
-        this.$nextTick(() => {
-          newItem.y += 200;
-          this.$nextTick(() => {
-            newItem.w += 200;
-            this.$nextTick(() => {
-              newItem.h += 200;
-            });
-          });
-        });
-
-      }, 1000);
-
     },
     // 在小组件鼠标落下的时候
     onWidgetMouseDown (e, widget) {
