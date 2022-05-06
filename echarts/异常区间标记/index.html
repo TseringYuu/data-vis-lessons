@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #chart {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <script src="./data.js"></script>
+    <script src="../lib/echarts.min.js"></script>
+    <script>
+
+        const errorIndexPieces = area
+            .map(a => [
+                data.findIndex(d => d.date === a.from),
+                data.findIndex(d => d.date === a.to),
+            ]) // [ [0, 2], [4, 6] ]
+            .flat(1); // [0, 2, 4, 6]
+
+        const indexPieces = [0, ...errorIndexPieces, data.length - 1]; // [0, 0, 2, 4, 6, 8]
+
+        const pieces = indexPieces.reduce((prev, current, i) => {
+            if (!indexPieces[i + 1]) {
+                return prev;
+            }
+            prev.push({
+                gt: current,
+                lte: indexPieces[i + 1],
+                color: i % 2 === 0 ? 'green' : 'red',
+            });
+            return prev;
+        }, []);
+
+        console.log(pieces);
+
+        const chart = echarts.init(document.getElementById('chart'));
+        chart.setOption({
+            xAxis: {
+                type: 'category',
+                data: data.map(d => d.date),
+            },
+            yAxis: {
+                type: 'value'
+            },
+            visualMap: {
+                show: false,
+                dimension: 0,
+                pieces,
+            },
+            series: [
+                {
+                    data: data.map(d => d.value),
+                    type: 'line'
+                }
+            ],
+        });
+    </script>
+</body>
+</html>
