@@ -395,7 +395,7 @@ export default {
         label: currentWidget.label,
         component: currentWidget.component, // 新增的组件名
         type: currentWidget.type, // 新增组件的类型
-        styles: currentWidget.styles, // 新增组件的类型
+        styles: cloneDeep(currentWidget.styles), // 新增组件的类型
       };
       this.list.push(newItem);
       this.onFocus(newItem);
