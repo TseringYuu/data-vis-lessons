@@ -30,6 +30,9 @@
       ref="panel"
       @dragover.prevent
       @drop="onDrop"
+      @mousedown="onPanelMouseDown"
+      @mousemove="onPanelMouseMove"
+      @mouseup="onPanelMouseUp"
     >
       <dragger
         v-for="(item, i) in list"
@@ -55,6 +58,15 @@
           @drop.native.stop="onDrop($event, i)"
         />
       </dragger>
+      <div
+        id="frame"
+        v-if="isFraming"
+        :style="{
+          width: `${ frame.w }px`,
+          height: `${ frame.h }px`,
+          transform: `translate(${ frame.x }px, ${ frame.y }px)`,
+        }"
+      />
     </div>
 
     <style-sider
@@ -139,6 +151,16 @@ export default {
       verticalStandardLineVisible: false,
       isVerticalStandardLineCorrect: false,
       verticalStandardLineX: 0,
+      // 是否正在框选
+      isFraming: false,
+      frame: {
+        clientX: 0,
+        clientY: 0,
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0,
+      },
     };
   },
   computed: {
@@ -153,6 +175,49 @@ export default {
     },
   },
   methods: {
+    // 元素是否在框内
+    isItemInFrame (item) {
+      return !(
+        item.y > this.frame.y + this.frame.h ||
+        item.x > this.frame.x + this.frame.w ||
+        this.frame.y > item.y + item.h ||
+        this.frame.x > item.x + item.w
+      );
+    },
+    onPanelMouseDown (e) {
+      this.frame.x = e.offsetX;
+      this.frame.y = e.offsetY;
+      this.frame.clientX = e.clientX;
+      this.frame.clientY = e.clientY;
+      this.isFraming = true;
+    },
+    onPanelMouseMove (e) {
+      if (!this.isFraming) {
+        return;
+      }
+
+      this.frame.w = e.clientX - this.frame.clientX;
+      this.frame.h = e.clientY - this.frame.clientY;
+
+      this.list
+      .map(item => {
+        item.focused = false;
+        return item;
+      })
+      .filter(this.isItemInFrame)
+      .forEach(item => {
+        item.focused = true;
+      });
+    },
+    onPanelMouseUp () {
+      this.isFraming = false;
+      this.frame = {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0,
+      };
+    },
     onWidgetMouseUp (i) {
       const current = this.list[i]; // x, y, w, h
       const rect = this.$refs.widget[i].rect; // left, top, width, height
@@ -477,5 +542,9 @@ body {
 }
 .standard-line.correct {
   background: red;
+}
+#frame {
+  position: absolute;
+  outline: 2px dashed red;
 }
 </style>
