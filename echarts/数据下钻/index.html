@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #chart {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chart"></div>
+    <script src="../lib/echarts.min.js"></script>
+    <script>
+        const chart = echarts.init(document.getElementById('chart'));
+
+        function getData (level = '0', area = '中国') {
+            return fetch(`http://localhost:8080?level=${ level }&area=${ area }`)
+                .then(res => res.json())
+        }
+
+        function getOption(data) {
+            return {
+                xAxis: {
+                    type: 'category',
+                    data: data.map(d => d.name),
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        data: data.map(d => d.value),
+                        type: 'bar',
+                        showBackground: true,
+                        backgroundStyle: {
+                            color: 'rgba(180, 180, 180, 0.2)'
+                        }
+                    }
+                ],
+            };
+        }
+
+        async function updateData (level, area) {
+            const data = await getData(level, area);
+            const option = getOption(data);
+            chart.setOption(option);
+        }
+
+        let level = 0;
+
+        function onDataItemClick (e) {
+            const area = e.name;
+            updateData(String(level), area);
+            level++;
+        }
+
+        chart.on('click', onDataItemClick);
+
+        updateData();
+        level++;
+
+    </script>
+</body>
+
+</html>

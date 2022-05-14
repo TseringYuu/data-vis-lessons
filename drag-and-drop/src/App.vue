@@ -161,6 +161,8 @@ export default {
         w: 0,
         h: 0,
       },
+      // 是否可以多选
+      multiable: false,
     };
   },
   computed: {
@@ -187,12 +189,25 @@ export default {
     onPanelMouseDown (e) {
       this.frame.x = e.offsetX;
       this.frame.y = e.offsetY;
+      this.frame.w = 0;
+      this.frame.h = 0;
       this.frame.clientX = e.clientX;
       this.frame.clientY = e.clientY;
       this.isFraming = true;
+      this.list.forEach((item) => {
+        item.focused = false;
+      });
     },
     onPanelMouseMove (e) {
       if (!this.isFraming) {
+        return;
+      }
+
+      if (this.multiable) {
+        return;
+      }
+
+      if (e.clientX !== this.frame.clientX + this.frame.w) {
         return;
       }
 
@@ -209,14 +224,30 @@ export default {
         item.focused = true;
       });
     },
+    // 框选结束
     onPanelMouseUp () {
-      this.isFraming = false;
-      this.frame = {
-        x: 0,
-        y: 0,
-        w: 0,
-        h: 0,
-      };
+      console.log(2);
+      const innerList = this.list.filter(d => d.focused);
+      if (innerList.length < 2) {
+        this.isFraming = false;
+        this.frame = {
+          x: 0,
+          y: 0,
+          w: 0,
+          h: 0,
+        };
+      } else {
+        this.isFraming = true;
+        const xMin = Math.min(...innerList.map(d => d.x));
+        const yMin = Math.min(...innerList.map(d => d.y));
+
+        this.frame = {
+          x: xMin,
+          y: yMin,
+          w: Math.max(...innerList.map(d => d.x + d.w)) - xMin,
+          h: Math.max(...innerList.map(d => d.y + d.h)) - yMin,
+        };
+      }
     },
     onWidgetMouseUp (i) {
       const current = this.list[i]; // x, y, w, h
@@ -285,7 +316,25 @@ export default {
         return item;
       });
     },
+    onKeyDown (e) {
+      switch (e.key) {
+        case 'Shift':
+          this.multiable = true;
+          break;
+
+        default:
+          break;
+      }
+    },
     onKeyUp (e) {
+      switch (e.key) {
+        case 'Shift':
+          this.multiable = false;
+          break;
+
+        default:
+          break;
+      }
       // ctrl + z
       if (e.ctrlKey && e.key === 'z') {
         this.withdraw();
@@ -423,10 +472,15 @@ export default {
     },
     // 让当前项获取焦点 其他项失去焦点
     onFocus (currentItem) {
-      this.list = this.list.map(item => {
-        item.focused = item.id === currentItem.id;
-        return item;
-      });
+      console.log(1);
+      if (this.multiable) {
+        currentItem.focused = true;
+      } else {
+        this.list = this.list.map(item => {
+          item.focused = item.id === currentItem.id;
+          return item;
+        });
+      }
     },
     // 右键菜单打开事件
     onContextMenuOpen (e, item) {
@@ -480,9 +534,11 @@ export default {
   },
   mounted () {
     document.addEventListener('keyup', this.onKeyUp);
+    document.addEventListener('keydown', this.onKeyDown);
   },
   beforeDestroy () {
     document.removeEventListener('keyup', this.onKeyUp);
+    document.removeEventListener('keydown', this.onKeyDown);
   },
 }
 </script>
