@@ -3,6 +3,7 @@
 ---
 
 ## drag-and-drop: demo实现BI可视化编辑器（合集）
+> 有bug在issue里提
 
 ---
 
