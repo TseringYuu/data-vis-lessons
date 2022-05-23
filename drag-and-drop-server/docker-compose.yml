@@ -1,0 +1,32 @@
+services:
+    nodejs:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: nodejs
+        container_name: nodejs
+        restart: always
+        ports:
+            - "80:80"
+        depends_on:
+            - db
+        networks:
+            - app-network
+
+    db:
+        image: mysql:5.7
+        container_name: db
+        restart: always
+        ports:
+            - "3306:3306"
+        environment:
+            - MYSQL_ROOT_PASSWORD=123456
+            - MYSQL_DATABASE=drag_and_drop_db
+        networks:
+            - app-network
+        volumes:
+          - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+
+networks:
+    app-network:
+        driver: bridge
