@@ -19,6 +19,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// 看板模块
 app.use('/dashboard', dashboard);
 
 // 启动服务
