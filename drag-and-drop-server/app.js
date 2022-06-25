@@ -23,6 +23,6 @@ app.use((req, res, next) => {
 app.use('/dashboard', dashboard);
 
 // 启动服务
-app.listen(80, () => {
+app.listen(3000, () => {
     console.log('启动成功');
 });

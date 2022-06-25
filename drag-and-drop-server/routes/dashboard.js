@@ -36,7 +36,7 @@ pool.getConnection((err, db) => {
 
     // 按照id获取看板
     router.get('/:id', (req, res) => {
-        db.query('SELECT * FROM dashboard WHERE id = ?', [req.params.id], (err, results, fields) => {
+        db.query(`SELECT * FROM dashboard WHERE id=${ req.params.id }`, (err, results, fields) => {
             res.send(err || results);
         });
     });
