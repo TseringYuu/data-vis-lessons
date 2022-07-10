@@ -121,7 +121,8 @@ import CustomVideo from '@/components/custom-video';
 import ContextMenu from 'vue-context';
 // 静态配置
 import * as CONFIG from '@/constants/config';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep } from 'lodash';
+import * as api from '@/api/dashboard';
 
 let currentId = 0;
 let widgetX = 0;
@@ -317,6 +318,7 @@ export default {
       });
     },
     onKeyDown (e) {
+      e.preventDefault();
       switch (e.key) {
         case 'Shift':
           this.multiable = true;
@@ -327,6 +329,7 @@ export default {
       }
     },
     onKeyUp (e) {
+      e.preventDefault();
       switch (e.key) {
         case 'Shift':
           this.multiable = false;
@@ -335,14 +338,23 @@ export default {
         default:
           break;
       }
-      // ctrl + z
+      // ctrl + z 撤回
       if (e.ctrlKey && e.key === 'z') {
         this.withdraw();
       }
-      // ctrl + y
+      // ctrl + y 反撤回
       if (e.ctrlKey && e.key === 'y') {
         this.ctrlY();
       }
+      // ctrl + s 保存
+      if (e.ctrlKey && e.key === 's') {
+        this.save();
+      }
+    },
+    // 保存
+    async save () {
+      const res = api.save(this.list);
+      console.log(res);
     },
     // 记录list
     record (rect) {

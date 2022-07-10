@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #chart {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <script src="./data.js"></script>
+    <script src="../lib/echarts.min.js"></script>
+    <script>
+
+        const chart = echarts.init(document.getElementById('chart'));
+        chart.setOption({
+            title: {
+                text: 'ECharts 入门示例'
+            },
+            tooltip: {},
+            legend: {
+                data: ['销量']
+            },
+            xAxis: {
+                data: data.map(d => d.date),
+            },
+            yAxis: {},
+            series: [{
+                name: '销量',
+                type: 'line',
+                data: data.map(d => d.value),
+            }],
+        });
+
+        chart.on('click', function (params) {
+            const idx = params.dataIndex;
+            const detail = data[idx];
+            console.log(detail);
+            // to do
+        });
+
+    </script>
+</body>
+</html>
